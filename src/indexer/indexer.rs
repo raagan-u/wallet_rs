@@ -17,6 +17,8 @@ pub enum IndexerError {
         
     #[error("Error parsing response: {0}")]
     ParseError(String),
+    #[error("Error fetching utxos: {0}")]
+    UtxoError(String)
 }
 
 impl IndexerClient {
@@ -37,6 +39,25 @@ impl IndexerClient {
                 .map_err(|e| IndexerError::ParseError(format!("Failed to parse: {}, response: {}", e, text)))
     }
     
+    pub async fn get_utxos_for_amount(&self, address: &str, amount: i64) -> Result<Vec<UTXO>, IndexerError> {
+        let unfiltered_utxos = self.get_utxos(&address).await?;
+        let mut filtered_utxos: Vec<UTXO> = Vec::new();
+        let mut total = 0;
+
+        for utxo in unfiltered_utxos {
+            total += utxo.value as i64;
+            filtered_utxos.push(utxo);
+            if total == amount {
+                return Ok(filtered_utxos);
+            }
+        }
+
+        if total < amount {
+            return Err(IndexerError::UtxoError(format!("insufficent balance expected {} got {} ", amount, total)));
+        }
+        Ok(filtered_utxos)
+    }
+    
     pub async fn get_tx(&self, txid: &str) -> Result<Transaction, IndexerError> {
         let url = format!("{}/tx/{}", self.url, txid);
         let resp = self.client.get(url).send().await?;
@@ -47,5 +68,4 @@ impl IndexerClient {
         
         Ok(tx)
     }
-    
 }
