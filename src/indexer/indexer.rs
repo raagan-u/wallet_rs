@@ -52,14 +52,14 @@ impl IndexerClient {
     pub async fn get_utxos_for_amount(
         &self,
         address: &str,
-        amount: i64,
+        amount: u64,
     ) -> Result<Vec<UTXO>, IndexerError> {
         let unfiltered_utxos = self.get_utxos(&address).await?;
         let mut filtered_utxos: Vec<UTXO> = Vec::new();
         let mut total = 0;
-
+        
         for utxo in unfiltered_utxos {
-            total += utxo.value as i64;
+            total += utxo.value as u64;
             filtered_utxos.push(utxo);
             if total == amount {
                 return Ok(filtered_utxos);

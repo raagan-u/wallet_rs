@@ -1,4 +1,4 @@
-use bitcoin::{key::Secp256k1, Address, CompressedPublicKey, Network, PrivateKey, PublicKey};
+use bitcoin::{key::Secp256k1, Address, CompressedPublicKey, Network, PrivateKey, PublicKey, TxIn};
 
 use crate::indexer::indexer::IndexerClient;
 
@@ -45,11 +45,7 @@ impl Wallet for SimpleWallet {
         self.indexer.get_balance(&self.address()).await.unwrap_or(0)
     }
 
-    fn build_transaction(&self, outputs: Vec<Output>) -> Result<Transaction, String> {
-        todo!()
-    }
-    
-    fn sign_and_send(&self, address: &str, amount: f64) -> Result<(), String> {
+    async fn send(&self, address: &str, amount: f64) -> Result<(), String> {
         unimplemented!()
     }
 }
