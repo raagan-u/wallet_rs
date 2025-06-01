@@ -5,6 +5,19 @@ use bitcoin::{absolute::LockTime, transaction::Version, OutPoint, ScriptBuf, Seq
 use crate::types::UTXO;
 
 const DUST_THRESHOLD: u64 = 546;
+// Constants for input vsize
+pub const P2WPKH_INPUT_VBYTES: usize = 68;     // SegWit native input
+pub const P2SH_P2WPKH_INPUT_VBYTES: usize = 91; // Wrapped SegWit input
+pub const P2PKH_INPUT_VBYTES: usize = 148;     // Legacy input
+
+// Constants for output vsize
+pub const P2WPKH_OUTPUT_VBYTES: usize = 31;    // SegWit native output
+pub const P2PKH_OUTPUT_VBYTES: usize = 34;     // Legacy output
+pub const P2TR_OUTPUT_VBYTES: usize = 43;      // Taproot output
+
+// Optional overhead
+pub const TX_OVERHEAD_VBYTES: usize = 10;      // Version, locktime, marker/flag, varints
+
 
 //todo: hold UTXOs rather than TxIn
 pub struct TransactionBuilder {
