@@ -1,6 +1,8 @@
 use bitcoin::{psbt::Output, Transaction};
 
 pub mod simple;
+pub mod htlc_wallet;
+mod htlc;
 
 pub trait Wallet {
     fn address(&self) -> String;
